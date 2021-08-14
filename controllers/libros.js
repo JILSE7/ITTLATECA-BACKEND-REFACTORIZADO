@@ -43,11 +43,11 @@ const getLibro = async(req, res = response) => {
                 results: (libro) ?  [libro] : []
             });
         };
-    
+
         //expresion regular
         const regex =  new RegExp(search, 'i' );  // la i indica que no es case sensitive, 
         const libros = await Libro.find({ //con el or podemos flexibilazar la busqueda a mas campos si la que esta antes no se cumple
-            $or: [{nombre: regex},{categoria: regex}],
+            $or: [{nombre: regex}, {autor:regex},{categoria: regex}],
             //$and : [{state:true}] y que cumpla esta condicion, si son false no las trae
         }); // trae todos los que coincidan con el
     
