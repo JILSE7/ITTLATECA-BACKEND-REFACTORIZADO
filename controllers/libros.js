@@ -70,6 +70,7 @@ const getLibro = async(req, res = response) => {
 
 const postLibro = async(req, res=response) => {
     const libro = req.body;
+    
     try {
         const newLibro = new Libro(libro);
         //Guardadndo en BD

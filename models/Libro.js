@@ -44,6 +44,10 @@ const libroSchema = Schema({
          type: Boolean,
          required: true,
          default: true
+     },
+     imagen: {
+         type:String,
+         default: "https://us.123rf.com/450wm/snake3d/snake3d1504/snake3d150400092/39232230-boeken-drie-3-kleurrijke-lege-dekking-geen-labels-school-leren-informatie-inhoud-pictogram-concept-3.jpg?ver=6"
      }
 
 });
