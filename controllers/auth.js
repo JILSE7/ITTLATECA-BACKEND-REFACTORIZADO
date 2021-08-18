@@ -55,7 +55,7 @@ const renovarToken = async(req, res = response) => {
     const user = req.userAuntenticated;
     console.log(user);
     // Generar el JWT
-    const token = await tokenGenerador(user._id);
+    const token = await tokenGenerador(user._id, user.numeroC, user.type);
 
     return res.json({
         ok:true,
