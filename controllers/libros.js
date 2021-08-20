@@ -5,6 +5,11 @@ const { Libro } = require("../models");
 //extrayendo funciones para validar id
 const {ObjectId} = require('mongoose').Types;
 
+//Cloudinary
+const cloudinary = require('cloudinary').v2;
+cloudinary.config(process.env.CLOUDINARY_URL);
+
+
 
 const getLibros = async(req, res = response) => {
     try {
@@ -69,17 +74,25 @@ const getLibro = async(req, res = response) => {
 
 
 const postLibro = async(req, res=response) => {
-    const libro = req.body;
-    
+    //const libro = req;
+    console.log(req.files);
+    console.log(JSON.parse(req.body.libro));
     try {
-        const newLibro = new Libro(libro);
+        const newLibro = new Libro(JSON.parse(req.body.libro));
+
+        if(req.files){
+            console.log('existe el archivo');
+            const {secure_url} = await cloudinary.uploader.upload(req.files.bookIMage.tempFilePath);
+            newLibro.imagen = secure_url;
+        };
+        
         //Guardadndo en BD
         await newLibro.save();
         //Enviando respuesta
         return res.status(200).json({
             ok: true,
             libro: newLibro
-        });
+        }); 
     } catch (error) {
         console.log(error);
         return res.status(500).json({

@@ -3,6 +3,8 @@
 const express = require('express');
 //DB CONEXION
 const dbConexion = require('./database/config');
+//File
+const fileUpload = require('express-fileupload');
 
 //Habilitacion de CORS
 const cors = require('cors');
@@ -24,6 +26,12 @@ app.use(express.static('public'))
 
 //Lectura y parse del body
 app.use(express.json());
+
+// Note that this option available for versions 1.0.0 and newer. 
+app.use(fileUpload({
+    useTempFiles : true,
+    tempFileDir : '/tmp/'
+}));
 
 
 //Routes
