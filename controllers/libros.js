@@ -8,6 +8,8 @@ const {ObjectId} = require('mongoose').Types;
 //Cloudinary
 const cloudinary = require('cloudinary').v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
+//Helpers
+const {validarImagen, extraerIdImagen, uploadImage} = require('../helpers/uploadFile')
 
 
 
@@ -85,7 +87,7 @@ const postLibro = async(req, res=response) => {
             const {secure_url} = await cloudinary.uploader.upload(req.files.bookIMage.tempFilePath);
             newLibro.imagen = secure_url;
         };
-        
+
         //Guardadndo en BD
         await newLibro.save();
         //Enviando respuesta
@@ -105,8 +107,34 @@ const postLibro = async(req, res=response) => {
 
 const putLibro = async(req, res = response) => {
     const {id} = req.params;
-    const libroPut= req.body;
-    try {
+    const {imagen,...libroPut}= JSON.parse(req.body.libro);
+    const newImage = req.files?.bookIMage;
+ 
+     try {
+
+        if(newImage){
+            console.log('Significa que tenemos que remover la imagen, eliminarla de cloudinary y volver a ponerla al modelo');
+            const {ok, extension} = validarImagen(newImage.name); //Validar que el archivo sea una imagen           
+            if(ok){
+                if(imagen.includes('cloudinary')){
+                    const idImagen = extraerIdImagen(imagen); //Extraermos el id de la imagen
+                    await cloudinary.uploader.destroy(idImagen); // Destruimos la iimagen
+                    const {secure_url} = await cloudinary.uploader.upload(newImage.tempFilePath);
+                    libroPut.imagen = secure_url;
+                }else{
+                    console.log('subir la imagen a cloudinary poque esta en otro lado');
+                    const url = await uploadImage(newImage.tempFilePath)
+                    libroPut.imagen = url;
+                }
+            }else{
+                console.log('caifo aqui');
+                return res.status(400).json({
+                    ok:false,
+                    msg: `Archivo no valido .${extension} no permitido, solo se permite png,jpg,jpeg`
+                })
+            }
+        }
+
         const libro = await Libro.findByIdAndUpdate(id, {...libroPut}, {new : true, useFindAndModify: false});
         res.status(200).json({
             ok:true,
@@ -118,7 +146,7 @@ const putLibro = async(req, res = response) => {
             ok: false,
             msg: 'Error al actualizar el libro, si el problema persiste comuniquese con el administrador'
         });
-    }
+    } 
 
 };
 
