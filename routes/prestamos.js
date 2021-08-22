@@ -4,7 +4,7 @@ const router =require('express').Router();
 
 const { check } = require('express-validator');
 //Controladores
-const { getPrestamos, postPrestamo, putPrestamo, borrarPrestamo   } = require('../controllers/prestamos');
+const { getPrestamos, postPrestamo, putPrestamo, borrarPrestamo, inactivarPrestamo   } = require('../controllers/prestamos');
 
 
 //Middlewares
@@ -31,12 +31,17 @@ router.put('/:prestamo', [
     validarRole
 ],putPrestamo);
 
+router.put('/inactivar/:prestamo', [
+    validacionToken,
+    validarRole
+],inactivarPrestamo);
+
 
 router.delete('/:prestamo', [
     validacionToken,
     validarRole,
-    check('prestamo', 'id invalido, verifquelo porfavor').isMongoId(),
-    validarCampos
+/*     check('prestamo', 'id invalido, verifquelo porfavor').isMongoId(),
+    validarCampos */
 ], borrarPrestamo)
 
 

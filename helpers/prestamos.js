@@ -117,11 +117,81 @@ const actualizarPrestamo = async( res=response, prestamoId, body) =>{
         })
      }
 
-}
+};
+
+
+
+
+const eliminarPrestamo = async( res=response, prestamoId, userId, libroId) => {
+
+    return new Promise(async(resolve, reject) => {
+
+        const [user, prestamo, libro] = await Promise.all([
+            Usuario.findById(userId),
+            Prestamo.findById(prestamoId),
+            Libro.findById(libroId)
+        ]);
+
+       //1.- Veificando que el usuario, prestamo y libro existan
+        if(!user){
+            return reject(`Este usuario no existe en la base de datos`);
+        };
+        if(!prestamo){
+            return reject(`Este prestamo no existe en la base`);
+        };
+        if(!libro){
+            return reject(`Este libro no existe en la base`);
+        };
+
+
+        const {devolucion} = prestamo;
+        
+        //Extrayendo los prestamos del usuario
+        const {prestamos: prestamosUsuario} = user
+        console.log('prestamos del usuario', prestamosUsuario); 
+
+         //Extrayendo info del libro
+         const {disponibles, existencias} = libro;
+         
+         if(devolucion){
+            //No tienes que devolver al stock
+            console.log('no tengo que hacer devolver el libro al stock porque ya esta devuelto, pero si quitarselo al usuario');
+            const newPrestamosUsuario = prestamosUsuario.filter(prestamo => prestamo != prestamoId);
+            console.log('quitando el prestamo', newPrestamosUsuario);
+            await Usuario.findByIdAndUpdate( userId, {prestamos: newPrestamosUsuario});
+        }else{
+            if(((disponibles*1) + 1) > (existencias*1)){
+                console.log('no puedo hacer el borrado');
+                return reject('El numero disponibles de los libros no pueden superar las existencias de un libro')
+            }else{
+                console.log('puedo hacer el borrado');
+                console.log(libro.prestamos);
+                console.log(libro.prestamos.filter(prestamo => prestamo  != prestamoId) );
+
+                    //Devolviendo libro y quitandole el prestamo
+                    await Libro.findByIdAndUpdate(libroId,{ "disponibles": String(Number(disponibles) + 1),  "prestamos" : libro.prestamos.filter(prestamo => prestamo  != prestamoId )});
+                
+                    //Quitando el prestamo al usuario y actualizando
+                    const newPrestamosUsuario = prestamosUsuario.filter(prestamo => prestamo != prestamoId);
+                    await Usuario.findByIdAndUpdate( userId, {prestamos: newPrestamosUsuario});
+                    console.log('quitando el prestamo', newPrestamosUsuario);
+
+            }
+        } 
+        
+        resolve(true);
+    });
+                
+};
+
+
+ 
+
 
 
 
 module.exports = {
     nuevoPrestamo,
-    actualizarPrestamo
+    actualizarPrestamo,
+    eliminarPrestamo
 }

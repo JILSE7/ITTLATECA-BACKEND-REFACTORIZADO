@@ -1,5 +1,5 @@
 const {response} = require('express');
-const { nuevoPrestamo, actualizarPrestamo } = require('../helpers/prestamos');
+const { nuevoPrestamo, actualizarPrestamo, eliminarPrestamo } = require('../helpers/prestamos');
 const { Prestamo } = require('../models');
 
 
@@ -49,7 +49,7 @@ const putPrestamo = (req, res = response) => {
 };
 
 
-const borrarPrestamo = async(req, res=response) => {
+const inactivarPrestamo = async(req, res=response) => {
     const {prestamo: id} = req.params;
     try {
         //Cambiar el estado a false, para no producir conflitos con relaciones
@@ -65,12 +65,38 @@ const borrarPrestamo = async(req, res=response) => {
             msg: 'Error al eliminar el prestamo'
         })
     }
+};
+
+
+const borrarPrestamo = async(req, res = response)=> {
+    const {prestamo} = req.params;
+    const {idLibro, idUsuario}  = req.body
+    try {
+        const resp = await eliminarPrestamo(res,prestamo, idUsuario, idLibro);
+        if(resp){
+            console.log('ha eliminar');
+            await Prestamo.findByIdAndDelete(prestamo);
+            console.log('prestamo eliminado');
+            return res.status(200).json({
+                ok:true,
+                msg: 'Prestamo Eliminado de la base de datos'
+            })
+
+        }
+        
+    } catch (error) {
+        console.log(error);
+    }
+
 }
+
+
 
 
 module.exports = {
     getPrestamos,
     postPrestamo,
     putPrestamo,
-    borrarPrestamo
+    borrarPrestamo,
+    inactivarPrestamo
 }
