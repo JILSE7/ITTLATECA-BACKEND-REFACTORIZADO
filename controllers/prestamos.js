@@ -53,7 +53,7 @@ const inactivarPrestamo = async(req, res=response) => {
     const {prestamo: id} = req.params;
     try {
         //Cambiar el estado a false, para no producir conflitos con relaciones
-        const prestamo = await Prestamo.findByIdAndUpdate(id, {activo: false}, {new: true, useFindAndModify: false});
+        const prestamo = await Prestamo.findByIdAndUpdate(id, {activo: false}, {new: true});
         return res.status(200).json({
             ok: true,
             prestamo
@@ -81,9 +81,7 @@ const borrarPrestamo = async(req, res = response)=> {
                 ok:true,
                 msg: 'Prestamo Eliminado de la base de datos'
             })
-
         }
-        
     } catch (error) {
         console.log(error);
     }

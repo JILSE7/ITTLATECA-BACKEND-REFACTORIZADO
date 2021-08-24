@@ -106,7 +106,8 @@ const actualizarPrestamo = async( res=response, prestamoId, body) =>{
         console.log('prestamoActualizado', prestamoActualizado);
         res.status(200).json({
             ok: true,
-             evento: prestamoActualizado
+            prestamo: prestamoActualizado,
+            msg: `Prestamo con id ${prestamoId} actualizado`
          })
          
         } catch (error) {
