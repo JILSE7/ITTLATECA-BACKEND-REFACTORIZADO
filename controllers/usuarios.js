@@ -84,14 +84,15 @@ const putUsuarios = async(req, res = response) => {
 };
 
 
-const deleteUsuario = async(req, res = response) => {
+const toogleConexion = async(req, res = response) => {
     const {id} = req.params;
+    const {activo} = req.body;
     try {
         //Cambiar el estado a false, para no producir conflitos con relaciones
-        const usuario = await Usuario.findByIdAndUpdate(id, {activo: false}, {new: true, useFindAndModify: false});
+        const usuario = await Usuario.findByIdAndUpdate(id, {activo}, {new: true});
         return res.status(200).json({
             ok: true,
-            usuario
+            msg: `usuario ${usuario.nombre} ha sido ${activo ? 'Activado' : 'Desactivado'}`
         })
     } catch (error) {
         console.log(error);
@@ -99,6 +100,27 @@ const deleteUsuario = async(req, res = response) => {
             ok:false,
             msg: 'Error al eliminar al usuario'
         })
+    } 
+}
+
+
+const deleteUsuario = async(req, res =response) => {
+    const {id}= req.params
+    
+    try {//Para eliminar un usuario, tenemos que estar seguros que no tenga ninguna devolucion pendiente
+    
+        await Usuario.findByIdAndDelete(id);
+
+        return res.status(200).json({
+            ok: true,
+            msg: `Eliminado con exito`
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            ok:false,
+            msg: 'Erro al intertar borrar al usuario de la base'
+        })        
     }
 }
 
@@ -107,5 +129,6 @@ module.exports = {
     getUsuarios,
     postUsuario,
     putUsuarios,
+    toogleConexion,
     deleteUsuario
 }

@@ -3,7 +3,7 @@ const router =require('express').Router();
 const {check} = require('express-validator');
 
 //Controladores
-const { getUsuarios, postUsuario, putUsuarios, deleteUsuario } = require('../controllers/usuarios');
+const { getUsuarios, postUsuario, putUsuarios, deleteUsuario, toogleConexion } = require('../controllers/usuarios');
 
 //Middlewares
 const { validacionToken, validarRole, validarCampos } = require('../middlewares');
@@ -39,11 +39,18 @@ router.put('/:id', [
 ],putUsuarios);
 
 
-router.delete('/:id', [
+router.put('/conexion/:id', [
     validacionToken,
     validarRole,
-],deleteUsuario)
+],toogleConexion)
 
+router.delete('/:id',  [
+    validacionToken,
+    validarRole,
+        check('id', 'No es un id valido').isMongoId(),
+        check('id').custom(usuarioExiste),
+        validarCampos
+], deleteUsuario)
 
 
 //Exportando el router

@@ -17,7 +17,6 @@ const usuarioExiste = async(search) => {
         if(userExist[0]){
             throw new Error(`El usuario con el numero de control ${search} ya esta dado de alta en la base de datos`)
         };
-
     }
 };
 
