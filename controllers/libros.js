@@ -135,7 +135,7 @@ const putLibro = async(req, res = response) => {
             }
         }
 
-        const libro = await Libro.findByIdAndUpdate(id, {...libroPut}, {new : true, useFindAndModify: false});
+        const libro = await Libro.findByIdAndUpdate(id, {...libroPut}, {new : true});
         res.status(200).json({
             ok:true,
             Libro: libro
@@ -151,14 +151,34 @@ const putLibro = async(req, res = response) => {
 };
 
 
+const unableLibro = async(req, res = response) => {
+    const {id} = req.params;
+    const {activo} = req.body
+    
+    try {
+        //Cambiar el estado a false, para no producir conflitos con relaciones
+        const libro = await Libro.findByIdAndUpdate(id, {activo}, {new: true});
+        return res.status(200).json({
+            ok: true,
+            msg: `El libro ${libro.nombre} ha sido ${activo ? 'activado': 'desactivado'}`
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            ok:false,
+            msg: 'Error al eliminar el libro'
+        })
+    }
+}
+
 const deleteLibro = async(req, res = response) => {
     const {id} = req.params;
     try {
-        //Cambiar el estado a false, para no producir conflitos con relaciones
-        const libro = await Libro.findByIdAndUpdate(id, {activo: false}, {new: true, useFindAndModify: false});
+        const libro = await Libro.findByIdAndDelete(id);
+
         return res.status(200).json({
             ok: true,
-            libro
+            msg: `El libro ${libro.nombre} ha sido eliminado de la base de datos`
         })
     } catch (error) {
         console.log(error);
@@ -175,5 +195,6 @@ module.exports = {
     getLibro,
     postLibro,
     putLibro,
-    deleteLibro
+    deleteLibro,
+    unableLibro
 }

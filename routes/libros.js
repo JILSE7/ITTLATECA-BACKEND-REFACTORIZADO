@@ -4,7 +4,7 @@ const { check } = require('express-validator');
 
 
 //Controladores
-const { getLibros, postLibro, getLibro, putLibro, deleteLibro } = require('../controllers/libros');
+const { getLibros, postLibro, getLibro, putLibro, deleteLibro, unableLibro } = require('../controllers/libros');
 const { libroValidacion } = require('../helpers/db-validaciones');
 
 //Middlewares
@@ -43,6 +43,13 @@ router.put('/:id', [
     check('id', 'id invalido, verifquelo porfavor').isMongoId(),
     validarCampos
 ],putLibro);
+
+router.put('/unable/:id', [
+    validacionToken,
+    validarRole,
+    check('id', 'id invalido, verifquelo porfavor').isMongoId(),
+    validarCampos
+],unableLibro);
 
 router.delete('/:id',[
     validacionToken,
