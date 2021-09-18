@@ -3,8 +3,11 @@ const {validationResult} = require('express-validator');
 
 
 const validarCampos = (req, res=response, next) => {
+
+    
+
     //Manejo de errores
-    const errors = validationResult(req);
+    const errors = validationResult(req.body.libro);
     console.log(errors);
     //si existen errores
     if(!errors.isEmpty()){

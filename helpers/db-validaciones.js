@@ -41,12 +41,14 @@ const carrerasValidacion = (carrera) => {
 
 const libroValidacion = async(libro) => {
         const libro2 = escapeRegExp(libro)
-        const regex =  new RegExp(libro2, 'i' );
-        const libroExiste = await Libro.find({nombre: regex});
+        console.log(libro);
+
+      /*   const regex =  new RegExp(libro2, 'i' );
+        const libroExiste = await Libro.find($and:[{nombre: regex}, {}]);
         if(libroExiste[0]){
             throw new Error(`El libro ${libro} ya esta registrado en la base de datos`);
         };
-    return true;
+    return true; */
 }
 
 function escapeRegExp (string) {

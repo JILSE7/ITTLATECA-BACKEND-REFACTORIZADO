@@ -76,11 +76,25 @@ const getLibro = async(req, res = response) => {
 
 
 const postLibro = async(req, res=response) => {
-    //const libro = req;
+    const libro= JSON.parse(req.body.libro);
     console.log(req.files);
-    console.log(JSON.parse(req.body.libro));
+
+    const regexNombre =  new RegExp(libro.nombre, 'i' );
+    const regexAutor =  new RegExp(libro.autor, 'i' );
+    console.log(regexNombre);
     try {
-        const newLibro = new Libro(JSON.parse(req.body.libro));
+
+        const verify = await Libro.find({$or: [{nombre: regexNombre}], $and: [{autor: regexAutor}]});
+
+        if(verify[0]){
+            return res.status(500).json({
+                ok:false,
+                msg: 'Este libro no puede ser dado de alta de nuevo'
+            })
+        }
+
+
+    /*     const newLibro = new Libro(JSON.parse(req.body.libro));
 
         if(req.files){
             console.log('existe el archivo');
@@ -94,7 +108,7 @@ const postLibro = async(req, res=response) => {
         return res.status(200).json({
             ok: true,
             libro: newLibro
-        }); 
+        });  */
     } catch (error) {
         console.log(error);
         return res.status(500).json({
@@ -108,6 +122,7 @@ const postLibro = async(req, res=response) => {
 const putLibro = async(req, res = response) => {
     const {id} = req.params;
     const {imagen,...libroPut}= JSON.parse(req.body.libro);
+    console.log(libroPut);
     const newImage = req.files?.bookIMage;
  
      try {

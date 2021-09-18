@@ -25,8 +25,7 @@ router.get('/:search', validacionToken,getLibro);
 router.post('/', [
     validacionToken,
     validarRole,
-  /*   check('nombre', 'El campo "nombre" esta vacio').notEmpty(),
-    check('nombre').custom(libroValidacion),
+    check('nombre', 'El campo "nombre" esta vacio').notEmpty(),
     check('autor','El campo "autor" esta vacio').notEmpty(),
     check('editorial', 'El campo "editorial" esta vacio').notEmpty(),
     check('edicion', 'El campo "edicion" esta vacio').notEmpty(),
@@ -34,7 +33,7 @@ router.post('/', [
     check('existencias', 'El campo "existencias" esta vacio').notEmpty(),
     check('disponibles', 'El campo "disponibles" esta vacio').notEmpty(),
     check('ubicacion', 'El campo "ubicacion" esta vacio').notEmpty(),
-    validarCampos */
+    validarCampos
 ],postLibro);
 
 router.put('/:id', [
