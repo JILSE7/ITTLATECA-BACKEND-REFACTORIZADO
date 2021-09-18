@@ -90,11 +90,11 @@ const postLibro = async(req, res=response) => {
             return res.status(500).json({
                 ok:false,
                 msg: 'Este libro no puede ser dado de alta de nuevo'
-            })
-        }
+            });
+        };
 
 
-    /*     const newLibro = new Libro(JSON.parse(req.body.libro));
+    const newLibro = new Libro(JSON.parse(req.body.libro));
 
         if(req.files){
             console.log('existe el archivo');
@@ -108,7 +108,7 @@ const postLibro = async(req, res=response) => {
         return res.status(200).json({
             ok: true,
             libro: newLibro
-        });  */
+        });  
     } catch (error) {
         console.log(error);
         return res.status(500).json({
